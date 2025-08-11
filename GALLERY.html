@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gallery - Good Shepherd High School Bweyogerere</title>
+  <style>
+    /* Reset & basics */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      line-height: 1.6;
+      color: #333;
+      background: #f5f5f5;
+    }
+
+    /* Header - Pink Theme */
+    header {
+      background-color: #f371a3;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      font-weight: bold;
+      font-size: 1.3rem;
+      cursor: default;
+    }
+
+    .logo img {
+      height: 50px;
+      margin-right: 12px;
+      border-radius: 8px;
+      border: 2px solid white;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    nav ul li a:hover {
+      background-color: #e74fb9;
+      transform: translateY(-2px);
+    }
+
+    .active {
+      background-color: #e74fb9;
+    }
+
+    /* Hero Section */
+    .hero {
+      height: 300px;
+      background-image: linear-gradient(rgba(22, 22, 22, 0.7), rgba(39, 35, 38, 0.7)), url('COMP LAB.jpg');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+    }
+
+    .hero-content h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    /* Main content */
+    main {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    .gallery-intro {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .gallery-intro h2 {
+      color: #0c0c0c;
+      font-size: 2rem;
+      margin-bottom: 15px;
+    }
+
+    .gallery-intro p {
+      font-size: 1.1rem;
+      color: #555;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Gallery Filter */
+    .gallery-filter {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .filter-btn {
+      padding: 8px 20px;
+      background: white;
+      border: 1px solid #f8c1dd;
+      border-radius: 30px;
+      color: #e74fb9;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+      background: #e74fb9;
+      color: white;
+      border-color: #e74fb9;
+    }
+
+    /* Gallery Grid */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .gallery-item {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .gallery-item:hover {
+      transform: translateY(-5px);
+    }
+
+    .gallery-img {
+      height: 250px;
+      overflow: hidden;
+    }
+
+    .gallery-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .gallery-item:hover .gallery-img img {
+      transform: scale(1.1);
+    }
+
+    .gallery-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(231, 79, 185, 0.8);
+      color: white;
+      padding: 15px;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+    }
+
+    .gallery-item:hover .gallery-caption {
+      transform: translateY(0);
+    }
+
+    .gallery-caption h3 {
+      margin-bottom: 5px;
+    }
+
+    /* Lightbox Modal */
+    .lightbox {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .lightbox-content {
+      max-width: 90%;
+      max-height: 90%;
+    }
+
+    .lightbox-content img {
+      max-width: 100%;
+      max-height: 80vh;
+      border-radius: 5px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    .lightbox-caption {
+      color: white;
+      text-align: center;
+      margin-top: 15px;
+      font-size: 1.2rem;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .close-btn:hover {
+      color: #f8c1dd;
+    }
+
+    .nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      background: rgba(231, 79, 185, 0.5);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background 0.3s ease;
+    }
+
+    .nav-btn:hover {
+      background: rgba(231, 79, 185, 0.8);
+    }
+
+    .prev-btn {
+      left: 30px;
+    }
+
+    .next-btn {
+      right: 30px;
+    }
+
+    /* Video Gallery */
+    .video-section {
+      margin: 60px 0;
+    }
+
+    .video-section h2 {
+      color: #e74fb9;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 1.8rem;
+    }
+
+    .video-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+      gap: 30px;
+    }
+
+    .video-item {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .video-thumbnail {
+      position: relative;
+      height: 250px;
+      overflow: hidden;
+    }
+
+    .video-thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .play-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #e74fb9;
+      font-size: 4rem;
+      opacity: 0.8;
+      transition: all 0.3s ease;
+    }
+
+    .video-item:hover .play-btn {
+      color: #f371a3;
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    .video-caption {
+      padding: 15px;
+      background: white;
+    }
+
+    .video-caption h3 {
+      color: #e74fb9;
+      margin-bottom: 5px;
+    }
+
+    /* Footer - Pink Theme */
+    footer {
+      background-color: #e74fb9;
+      color: white;
+      padding: 30px 20px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      gap: 30px;
+      position: relative;
+    }
+
+    .footer-section {
+      flex: 1 1 280px;
+      max-width: 300px;
+    }
+
+    .footer-section h3 {
+      margin-bottom: 15px;
+      border-bottom: 2px solid #f8c1dd;
+      padding-bottom: 8px;
+      color: #fff;
+    }
+
+    .footer-section a {
+      display: inline-block;
+      margin-right: 10px;
+      color: white;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .footer-section.links a:hover {
+      color: #f8c1dd;
+      transform: translateX(5px);
+    }
+
+    .footer-gallery {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .footer-gallery img {
+      width: 90px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 2px solid #f8c1dd;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .footer-gallery img:hover {
+      transform: scale(1.1);
+      border-color: white;
+    }
+
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .social-icons a {
+      color: white;
+      font-size: 1.8rem;
+      transition: all 0.3s ease;
+    }
+
+    .social-icons a:hover {
+      color: #f8c1dd;
+      transform: translateY(-3px);
+    }
+
+    .copyright {
+      width: 100%;
+      text-align: center;
+      padding: 15px 0 0;
+      margin-top: 20px;
+      border-top: 1px solid #f371a3;
+      font-size: 0.9rem;
+      color: #fff;
+    }
+
+    /* Responsive */
+    @media (max-width: 700px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      nav ul {
+        flex-direction: column;
+        width: 100%;
+      }
+      nav ul li a {
+        display: block;
+        width: 100%;
+      }
+      .hero-content h1 {
+        font-size: 2rem;
+      }
+      .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+      .video-container {
+        grid-template-columns: 1fr;
+      }
+      footer {
+        flex-direction: column;
+        align-items: center;
+      }
+      .footer-section {
+        text-align: center;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <img src="LOGO.jpg" alt="Good Shepherd High School Logo" />
+      Good Shepherd High School Bweyogerere
+    </div>
+    <nav>
+      <ul>
+        <li><a href="Index.html">HOME</a></li>
+        <li><a href="ABOUT US.html">ABOUT US</a></li>
+        <li><a href="ADMISSION.html">ADMISSIONS</a></li>
+        <li><a href="academics.html">ACADEMICS</a></li>
+        <li><a href="GALLERY.html" class="active">GALLERY</a></li>
+       
+      </ul>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1>School Gallery</h1>
+      <p>Explore moments that define the Good Shepherd High School experience</p>
+    </div>
+  </section>
+
+  <main>
+    <div class="gallery-intro">
+      <h2>Our School in Pictures</h2>
+      <p>Browse through our collection of photos showcasing campus life, academic activities, sports, cultural events, and more. These images capture the vibrant spirit of our school community.</p>
+    </div>
+
+    <div class="gallery-filter">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="campus">Campus</button>
+      <button class="filter-btn" data-filter="academics">Academics</button>
+      <button class="filter-btn" data-filter="sports">Sports</button>
+      <button class="filter-btn" data-filter="events">Events</button>
+      <button class="filter-btn" data-filter="students">Student Life</button>
+    </div>
+
+    <div class="gallery-grid">
+      <!-- Campus Photos -->
+      <div class="gallery-item" data-category="campus">
+        <div class="gallery-img">
+          <img src="COMP.jpg" alt="School Building">
+        </div>
+        <div class="gallery-caption">
+          <h3>Main School Building</h3>
+          <p>Our modern school facilities</p>
+        </div>
+      </div>
+      
+      <div class="gallery-item" data-category="campus">
+        <div class="gallery-img">
+          <img src="SCI LAB.jpg" alt="Science Lab">
+        </div>
+        <div class="gallery-caption">
+          <h3>Science Laboratory</h3>
+          <p>Well-equipped for practical learning</p>
+        </div>
+      </div>
+      
+      <!-- Academics Photos -->
+      <div class="gallery-item" data-category="academics">
+        <div class="gallery-img">
+          <img src="COMP LAB.jpg" alt="Computer Class">
+        </div>
+        <div class="gallery-caption">
+          <h3>Computer Class</h3>
+          <p>Students learning ICT skills</p>
+        </div>
+      </div>
+      
+      <div class="gallery-item" data-category="academics">
+        <div class="gallery-img">
+          <img src="LAB3.jpg" alt="Library">
+        </div>
+        <div class="gallery-caption">
+          <h3>School Library</h3>
+          <p>Quiet space for research and reading</p>
+        </div>
+      </div>
+      
+      <!-- Sports Photos -->
+      <div class="gallery-item" data-category="sports">
+        <div class="gallery-img">
+          <img src="LAB 4.jpg" alt="Football Match">
+        </div>
+        <div class="gallery-caption">
+          <h3>Inter-House Football</h3>
+          <p>Annual sports competition</p>
+        </div>
+      </div>
+      
+      <div class="gallery-item" data-category="sports">
+        <div class="gallery-img">
+          <img src="COMP.jpg" alt="Athletics">
+        </div>
+        <div class="gallery-caption">
+          <h3>Sports Day</h3>
+          <p>Track and field events</p>
+        </div>
+      </div>
+      
+      <!-- Events Photos -->
+      <div class="gallery-item" data-category="events">
+        <div class="gallery-img">
+          <img src="COMP LAB.jpg" alt="Prize Giving">
+        </div>
+        <div class="gallery-caption">
+          <h3>Prize Giving Day</h3>
+          <p>Celebrating academic excellence</p>
+        </div>
+      </div>
+      
+      <div class="gallery-item" data-category="events">
+        <div class="gallery-img">
+          <img src="SCI LAB.jpg" alt="Cultural Day">
+        </div>
+        <div class="gallery-caption">
+          <h3>Cultural Day</h3>
+          <p>Showcasing Ugandan traditions</p>
+        </div>
+      </div>
+      
+      <!-- Student Life Photos -->
+      <div class="gallery-item" data-category="students">
+        <div class="gallery-img">
+          <img src="LAB3.jpg" alt="Debate Club">
+        </div>
+        <div class="gallery-caption">
+          <h3>Debate Club</h3>
+          <p>Developing public speaking skills</p>
+        </div>
+      </div>
+      
+      <div class="gallery-item" data-category="students">
+        <div class="gallery-img">
+          <img src="LAB 4.jpg" alt="Science Club">
+        </div>
+        <div class="gallery-caption">
+          <h3>Science Club</h3>
+          <p>Hands-on experiments</p>
+        </div>
+      </div>
+      
+      <div class="gallery-item" data-category="students">
+        <div class="gallery-img">
+          <img src="COMP.jpg" alt="Music Class">
+        </div>
+        <div class="gallery-caption">
+          <h3>Music Class</h3>
+          <p>Learning traditional instruments</p>
+        </div>
+      </div>
+      
+      <div class="gallery-item" data-category="students">
+        <div class="gallery-img">
+          <img src="COMP LAB.jpg" alt="Art Exhibition">
+        </div>
+        <div class="gallery-caption">
+          <h3>Art Exhibition</h3>
+          <p>Showcasing student creativity</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Video Gallery Section -->
+    <div class="video-section">
+      <h2>School Videos</h2>
+      <div class="video-container">
+        <div class="video-item">
+          <div class="video-thumbnail">
+            <img src="SCI LAB.jpg" alt="School Tour">
+            <div class="play-btn">
+              <i class="fas fa-play"></i>
+            </div>
+          </div>
+          <div class="video-caption">
+            <h3>Campus Tour</h3>
+            <p>Virtual tour of our facilities</p>
+          </div>
+        </div>
+        
+        <div class="video-item">
+          <div class="video-thumbnail">
+            <img src="LAB3.jpg" alt="Sports Day">
+            <div class="play-btn">
+              <i class="fas fa-play"></i>
+            </div>
+          </div>
+          <div class="video-caption">
+            <h3>Annual Sports Day</h3>
+            <p>Highlights from our sports event</p>
+          </div>
+        </div>
+        
+        <div class="video-item">
+          <div class="video-thumbnail">
+            <img src="LAB 4.jpg" alt="Graduation">
+            <div class="play-btn">
+              <i class="fas fa-play"></i>
+            </div>
+          </div>
+          <div class="video-caption">
+            <h3>Graduation Ceremony</h3>
+            <p>Celebrating our graduates</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Lightbox Modal -->
+  <div class="lightbox" id="lightbox">
+    <span class="close-btn" id="close-btn">&times;</span>
+    <span class="nav-btn prev-btn" id="prev-btn"><i class="fas fa-chevron-left"></i></span>
+    <span class="nav-btn next-btn" id="next-btn"><i class="fas fa-chevron-right"></i></span>
+    <div class="lightbox-content">
+      <img id="lightbox-img" src="" alt="">
+      <div class="lightbox-caption" id="lightbox-caption"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-section featured-gallery">
+      <h3>Featured Photos</h3>
+      <div class="footer-gallery">
+        <img src="COMP.jpg" alt="School Building" />
+        <img src="COMP.jpg" alt="Teacher" />
+        <img src="COMP LAB.jpg" alt="Students" />
+        <img src="COMP.jpg" alt="Classroom" />
+      </div>
+    </div>
+
+    <div class="footer-section contact-info">
+      <h3>Contact Us</h3>
+      <p>Address: Bweyogerere, Kampala, Uganda</p>
+      <p>Phone: +256 702442687/0772401975</p>
+      <p>Email: goodshepherdhighbweyogerere@gmail.com</p>
+    </div>
+
+    <div class="footer-section location">
+      <h3>Our Location</h3>
+      <p>
+        <i class="fas fa-map-marker-alt"></i>
+         Bweyogerere, Kampala, Uganda
+      </p>
+      <a href="https://www.google.com/maps/place/Bweyogerere,+Kampala,+Uganda" target="_blank" style="color: #f8c1dd; text-decoration: underline;">
+        View on Google Maps
+      </a>
+    </div>
+
+    <div class="footer-section social">
+      <h3>Follow Us</h3>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-linkedin"></i></a>
+        <a href="#"><i class="fab fa-whatsapp"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+
+    <div class="copyright">
+      &copy; 2025 Good Shepherd High School Bweyogerere. All Rights Reserved.
+    </div>
+  </footer>
+
+  <script>
+    // Gallery Filter Functionality
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Update active button
+        filterBtns.forEach(btn => btn.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const filter = btn.dataset.filter;
+        
+        // Filter items
+        galleryItems.forEach(item => {
+          if (filter === 'all' || item.dataset.category === filter) {
+            item.style.display = 'block';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // Lightbox Functionality
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxCaption = document.getElementById('lightbox-caption');
+    const closeBtn = document.getElementById('close-btn');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    
+    let currentIndex = 0;
+    const images = Array.from(document.querySelectorAll('.gallery-img img'));
+    const captions = Array.from(document.querySelectorAll('.gallery-caption'));
+    
+    // Open lightbox
+    images.forEach((img, index) => {
+      img.addEventListener('click', () => {
+        currentIndex = index;
+        updateLightbox();
+        lightbox.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      });
+    });
+    
+    // Close lightbox
+    closeBtn.addEventListener('click', () => {
+      lightbox.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    });
+    
+    // Navigation
+    prevBtn.addEventListener('click', () => {
+      currentIndex = (currentIndex - 1 + images.length) % images.length;
+      updateLightbox();
+    });
+    
+    nextBtn.addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % images.length;
+      updateLightbox();
+    });
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (lightbox.style.display === 'flex') {
+        if (e.key === 'Escape') {
+          lightbox.style.display = 'none';
+          document.body.style.overflow = 'auto';
+        } else if (e.key === 'ArrowLeft') {
+          currentIndex = (currentIndex - 1 + images.length) % images.length;
+          updateLightbox();
+        } else if (e.key === 'ArrowRight') {
+          currentIndex = (currentIndex + 1) % images.length;
+          updateLightbox();
+        }
+      }
+    });
+    
+    function updateLightbox() {
+      lightboxImg.src = images[currentIndex].src;
+      lightboxCaption.innerHTML = `
+        <h3>${captions[currentIndex].querySelector('h3').textContent}</h3>
+        <p>${captions[currentIndex].querySelector('p').textContent}</p>
+      `;
+    }
+    
+    // Close lightbox when clicking outside image
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) {
+        lightbox.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    });
+  </script>
+
+</body>
+</html>
